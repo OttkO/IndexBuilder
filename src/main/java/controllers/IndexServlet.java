@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -19,7 +20,9 @@ public class IndexServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         JSONObject jsonObject = new JSONObject();
         try {
-            PosIndexer.buildIndexes(Config.articleDir,Config.tweetsDir);
+            String tweetsDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "tweets").getAbsolutePath();
+            String articleDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "articles").getAbsolutePath();
+            PosIndexer.buildIndexes(articleDir,tweetsDir);
             jsonObject.put("status", "Success");
         } catch (SQLException e) {
             e.printStackTrace();

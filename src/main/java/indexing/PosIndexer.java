@@ -1,5 +1,6 @@
 package indexing;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,7 +40,9 @@ public class PosIndexer {
             }
         }
     }
-    public static void buildIndexes(String articleDir, String tweetsDir) throws IOException, SQLException {
+    public static void buildIndexes(String articleDir , String tweetsDir) throws IOException, SQLException {
+        tweetsDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "tweets").getAbsolutePath();
+        articleDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "articles").getAbsolutePath();
         DbHandler.setupDatabase();
         makeArticleIndex(articleDir);
         makeTwitterIndex(tweetsDir);
