@@ -161,175 +161,22 @@
   
   
   <!-- Application Server Libraries -->
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
   
   <!-- Modules -->
   
-  
-  <!-- Module IndexingJavaAPI -->
-  
-  <dirname property="module.indexingjavaapi.basedir" file="${ant.file}"/>
-  
-  
-  <property name="module.jdk.home.indexingjavaapi" value="${project.jdk.home}"/>
-  <property name="module.jdk.bin.indexingjavaapi" value="${project.jdk.bin}"/>
-  <property name="module.jdk.classpath.indexingjavaapi" value="${project.jdk.classpath}"/>
-  
-  <property name="compiler.args.indexingjavaapi" value="-encoding UTF-8 -source 8 -target 1.8 ${compiler.args}"/>
-  
-  <property name="indexingjavaapi.output.dir" value="${module.indexingjavaapi.basedir}/target/classes"/>
-  <property name="indexingjavaapi.testoutput.dir" value="${module.indexingjavaapi.basedir}/target/test-classes"/>
-  
-  <path id="indexingjavaapi.module.bootclasspath">
-    <!-- Paths to be included in compilation bootclasspath -->
-  </path>
-  
-  <path id="indexingjavaapi.module.production.classpath">
-    <path refid="${module.jdk.classpath.indexingjavaapi}"/>
-    <path refid="library.mysql-connector-java-5.0.8-bin.classpath"/>
-    <path refid="library.commons-io-2.5.classpath"/>
-    <path refid="library.maven:_javax:javaee-api:7.0.classpath"/>
-    <path refid="library.maven:_com.sun.mail:javax.mail:1.5.0.classpath"/>
-    <path refid="library.maven:_javax.activation:activation:1.1.classpath"/>
-    <path refid="library.maven:_org.json:json:20151123.classpath"/>
-    <path refid="library.maven:_mysql:mysql-connector-java:5.1.6.classpath"/>
-    <path refid="library.maven:_com.opencsv:opencsv:3.8.classpath"/>
-    <path refid="library.maven:_org.apache.commons:commons-lang3:3.4.classpath"/>
-    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.9.2.classpath"/>
-    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
-    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
-    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
-    <path refid="library.maven:_commons-io:commons-io:2.5.classpath"/>
-  </path>
-  
-  <path id="indexingjavaapi.runtime.production.module.classpath">
-    <pathelement location="${indexingjavaapi.output.dir}"/>
-    <path refid="library.mysql-connector-java-5.0.8-bin.classpath"/>
-    <path refid="library.commons-io-2.5.classpath"/>
-    <path refid="library.maven:_javax:javaee-api:7.0.classpath"/>
-    <path refid="library.maven:_com.sun.mail:javax.mail:1.5.0.classpath"/>
-    <path refid="library.maven:_javax.activation:activation:1.1.classpath"/>
-    <path refid="library.maven:_org.json:json:20151123.classpath"/>
-    <path refid="library.maven:_mysql:mysql-connector-java:5.1.6.classpath"/>
-    <path refid="library.maven:_com.opencsv:opencsv:3.8.classpath"/>
-    <path refid="library.maven:_org.apache.commons:commons-lang3:3.4.classpath"/>
-    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.9.2.classpath"/>
-    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
-    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
-    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
-    <path refid="library.maven:_commons-io:commons-io:2.5.classpath"/>
-  </path>
-  
-  <path id="indexingjavaapi.module.classpath">
-    <path refid="${module.jdk.classpath.indexingjavaapi}"/>
-    <pathelement location="${indexingjavaapi.output.dir}"/>
-    <path refid="library.mysql-connector-java-5.0.8-bin.classpath"/>
-    <path refid="library.commons-io-2.5.classpath"/>
-    <path refid="library.maven:_javax:javaee-api:7.0.classpath"/>
-    <path refid="library.maven:_com.sun.mail:javax.mail:1.5.0.classpath"/>
-    <path refid="library.maven:_javax.activation:activation:1.1.classpath"/>
-    <path refid="library.maven:_org.json:json:20151123.classpath"/>
-    <path refid="library.maven:_mysql:mysql-connector-java:5.1.6.classpath"/>
-    <path refid="library.maven:_com.opencsv:opencsv:3.8.classpath"/>
-    <path refid="library.maven:_org.apache.commons:commons-lang3:3.4.classpath"/>
-    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.9.2.classpath"/>
-    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
-    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
-    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
-    <path refid="library.maven:_junit:junit:4.12.classpath"/>
-    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
-    <path refid="library.maven:_commons-io:commons-io:2.5.classpath"/>
-  </path>
-  
-  <path id="indexingjavaapi.runtime.module.classpath">
-    <pathelement location="${indexingjavaapi.testoutput.dir}"/>
-    <pathelement location="${indexingjavaapi.output.dir}"/>
-    <path refid="library.mysql-connector-java-5.0.8-bin.classpath"/>
-    <path refid="library.commons-io-2.5.classpath"/>
-    <path refid="library.maven:_javax:javaee-api:7.0.classpath"/>
-    <path refid="library.maven:_com.sun.mail:javax.mail:1.5.0.classpath"/>
-    <path refid="library.maven:_javax.activation:activation:1.1.classpath"/>
-    <path refid="library.maven:_org.json:json:20151123.classpath"/>
-    <path refid="library.maven:_mysql:mysql-connector-java:5.1.6.classpath"/>
-    <path refid="library.maven:_com.opencsv:opencsv:3.8.classpath"/>
-    <path refid="library.maven:_org.apache.commons:commons-lang3:3.4.classpath"/>
-    <path refid="library.maven:_commons-beanutils:commons-beanutils:1.9.2.classpath"/>
-    <path refid="library.maven:_commons-logging:commons-logging:1.1.1.classpath"/>
-    <path refid="library.maven:_commons-collections:commons-collections:3.2.1.classpath"/>
-    <path refid="library.maven:_com.google.code.gson:gson:2.3.1.classpath"/>
-    <path refid="library.maven:_junit:junit:4.12.classpath"/>
-    <path refid="library.maven:_org.hamcrest:hamcrest-core:1.3.classpath"/>
-    <path refid="library.maven:_commons-io:commons-io:2.5.classpath"/>
-  </path>
-  
-  
-  <patternset id="excluded.from.module.indexingjavaapi">
-    <patternset refid="ignored.files"/>
-  </patternset>
-  
-  <patternset id="excluded.from.compilation.indexingjavaapi">
-    <patternset refid="excluded.from.module.indexingjavaapi"/>
-  </patternset>
-  
-  <path id="indexingjavaapi.module.sourcepath">
-    <dirset dir="${module.indexingjavaapi.basedir}">
-      <include name="src/main/java"/>
-      <include name="src/main/resources"/>
-    </dirset>
-  </path>
-  
-  <path id="indexingjavaapi.module.test.sourcepath">
-    <dirset dir="${module.indexingjavaapi.basedir}">
-      <include name="src/test/java"/>
-    </dirset>
-  </path>
-  
-  
-  <target name="compile.module.indexingjavaapi" depends="compile.module.indexingjavaapi.production,compile.module.indexingjavaapi.tests" description="Compile module IndexingJavaAPI"/>
-  
-  <target name="compile.module.indexingjavaapi.production" description="Compile module IndexingJavaAPI; production classes">
-    <mkdir dir="${indexingjavaapi.output.dir}"/>
-    <javac destdir="${indexingjavaapi.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.indexingjavaapi}/javac">
-      <compilerarg line="${compiler.args.indexingjavaapi}"/>
-      <bootclasspath refid="indexingjavaapi.module.bootclasspath"/>
-      <classpath refid="indexingjavaapi.module.production.classpath"/>
-      <src refid="indexingjavaapi.module.sourcepath"/>
-      <patternset refid="excluded.from.compilation.indexingjavaapi"/>
-    </javac>
-    
-    <copy todir="${indexingjavaapi.output.dir}">
-      <fileset dir="${module.indexingjavaapi.basedir}/src/main/java">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-      <fileset dir="${module.indexingjavaapi.basedir}/src/main/resources">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="compile.module.indexingjavaapi.tests" depends="compile.module.indexingjavaapi.production" description="compile module IndexingJavaAPI; test classes" unless="skip.tests">
-    <mkdir dir="${indexingjavaapi.testoutput.dir}"/>
-    <javac destdir="${indexingjavaapi.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.indexingjavaapi}/javac">
-      <compilerarg line="${compiler.args.indexingjavaapi}"/>
-      <bootclasspath refid="indexingjavaapi.module.bootclasspath"/>
-      <classpath refid="indexingjavaapi.module.classpath"/>
-      <src refid="indexingjavaapi.module.test.sourcepath"/>
-      <patternset refid="excluded.from.compilation.indexingjavaapi"/>
-    </javac>
-    
-    <copy todir="${indexingjavaapi.testoutput.dir}">
-      <fileset dir="${module.indexingjavaapi.basedir}/src/test/java">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="clean.module.indexingjavaapi" description="cleanup module">
-    <delete dir="${indexingjavaapi.output.dir}"/>
-    <delete dir="${indexingjavaapi.testoutput.dir}"/>
-  </target>
+  <import file="${basedir}/module_indexingjavaapi.xml"/>
   
   <target name="init" description="Build initialization">
     <!-- Perform any build initialization in this target -->
@@ -355,7 +202,7 @@
     <property name="artifact.temp.output.indexingjavaapi:war" value="${artifacts.temp.dir}/IndexingJavaAPI_war"/>
     <mkdir dir="${artifact.temp.output.indexingjavaapi:war}"/>
     <zip destfile="${temp.jar.path.SampleApp.war}">
-      <zipfileset dir="${artifact.temp.output.indexingjavaapi:war_exploded}"/>
+      <zipfileset dir="${artifact.output.indexingjavaapi:war_exploded}"/>
     </zip>
     <copy file="${temp.jar.path.SampleApp.war}" tofile="${artifact.temp.output.indexingjavaapi:war}/SampleApp.war"/>
   </target>

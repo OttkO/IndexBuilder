@@ -1,0 +1,9 @@
+package indexing;
+
+/**
+ * Created by OttkO on 08-Jan-17.
+ */
+public final class Config {
+    public static final String articleDir = "G:\\InputFiles\\debug";
+    public static final String tweetsDir = "G:\\InputFiles\\debug2";
+}
