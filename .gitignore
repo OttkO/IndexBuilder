@@ -1,2 +1,12 @@
 target/
+src/main/java/indexing/Config.java
+src/main/java/indexing/MysqlConnect.java
 
+
+libsIntelliJ/idea.jar
+indexingjavaapi_Fri_Jan_06_15-02-27_CET_2017.properties
+indexingjavaapi_Fri_Jan_06_15-02-27_CET_2017.xml
+indexingjavaapi_Fri_Jan_06_15-37-02_CET_2017.properties
+indexingjavaapi_Fri_Jan_06_15-37-02_CET_2017.xml
+indexingjavaapi_Fri_Jan_06_17-30-10_CET_2017.xml
+indexingjavaapi_Fri_Jan_06_17-30-54_CET_2017.properties
