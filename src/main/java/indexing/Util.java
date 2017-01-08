@@ -1,9 +1,7 @@
 package indexing;
 
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 
-import javax.json.JsonReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,6 +40,8 @@ public class Util {
         return line32;
     }
 
+    public static boolean errorOnEmptyFolder = true;
+
     public static List<String> getFilesInDirectory(String directory) {
         File folder = new File(directory);
         File[] listOfFiles = folder.listFiles();
@@ -52,6 +52,9 @@ public class Util {
                 fileNames.add(listOfFiles[i].getAbsolutePath());
             }
 
+        }
+        if(fileNames.isEmpty() && errorOnEmptyFolder){
+            throw new Error("No files found in " + directory);
         }
         return fileNames;
     }
