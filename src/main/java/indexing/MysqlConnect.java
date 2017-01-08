@@ -6,13 +6,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class MysqlConnect {
-    // init database constants
-    private static final String DATABASE_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String DATABASE_NAME = "indexing";
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/" + DATABASE_NAME;
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "";
-    private static final String MAX_POOL = "250";
 
     // init connection object
     private Connection connection;
@@ -23,9 +16,9 @@ public class MysqlConnect {
     private Properties getProperties() {
         if (properties == null) {
             properties = new Properties();
-            properties.setProperty("user", USERNAME);
-            properties.setProperty("password", PASSWORD);
-            properties.setProperty("MaxPooledStatements", MAX_POOL);
+            properties.setProperty("user", Config.USERNAME);
+            properties.setProperty("password", Config.PASSWORD);
+            properties.setProperty("MaxPooledStatements", Config.MAX_POOL);
         }
         return properties;
     }
@@ -34,8 +27,8 @@ public class MysqlConnect {
     public Connection connect() {
         if (connection == null) {
             try {
-                Class.forName(DATABASE_DRIVER);
-                connection = DriverManager.getConnection(DATABASE_URL, getProperties());
+                Class.forName(Config.DATABASE_DRIVER);
+                connection = DriverManager.getConnection(Config.DATABASE_URL, getProperties());
             } catch (ClassNotFoundException | SQLException e) {
                 e.printStackTrace();
             }
