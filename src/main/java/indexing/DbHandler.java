@@ -181,7 +181,7 @@ public class DbHandler {
                 preparedStatement.setInt(2, lineNumber);
                 preparedStatement.setInt(3, position);
                 preparedStatement.setString(4, keyword);
-
+                preparedStatement.executeUpdate();
                 // execute insert SQL stetement
                 ResultSet rs = preparedStatement.getGeneratedKeys();
                 if (rs.next()){
