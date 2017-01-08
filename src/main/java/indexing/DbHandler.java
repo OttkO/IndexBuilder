@@ -183,7 +183,10 @@ public class DbHandler {
                 preparedStatement.setString(4, keyword);
 
                 // execute insert SQL stetement
-                id = preparedStatement.executeUpdate();
+                ResultSet rs = preparedStatement.getGeneratedKeys();
+                if (rs.next()){
+                    fileId=rs.getInt(1);
+                }
             } catch (SQLException e) {
                 throw new Error(e);
             } finally {
@@ -192,6 +195,7 @@ public class DbHandler {
                         preparedStatement.close();
                     } catch (SQLException e) {
                         e.printStackTrace();
+                        System.out.println("table = [" + table + "], fileId = [" + fileId + "], lineNumber = [" + lineNumber + "], position = [" + position + "], keyword = [" + keyword + "]");
                     }
                 }
                 mysqlConnect.disconnect();
@@ -297,6 +301,7 @@ public class DbHandler {
                     result.lineNumber = rs.getInt("line_number");
                     result.fileName = rs.getString("filename");
                     result.keyword = rs.getString("keyword");
+
                     if (rs.next()) {
                         // Many found
                         throw new Error("Multiple findKeywordInfoArticleIndexes found");

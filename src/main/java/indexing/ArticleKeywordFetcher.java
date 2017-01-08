@@ -1,8 +1,6 @@
 package indexing;
 
 import java.util.ArrayList;
-import java.util.Spliterators;
-import java.util.stream.Stream;
 
 /**
  * Created by OttkO on 04-Jan-17.
