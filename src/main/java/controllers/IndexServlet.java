@@ -2,7 +2,6 @@ package controllers;
 
 import indexing.Config;
 import indexing.PosIndexer;
-import javafx.geometry.Pos;
 import org.json.JSONObject;
 
 import javax.servlet.ServletException;
