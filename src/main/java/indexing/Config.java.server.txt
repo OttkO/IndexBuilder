@@ -1,0 +1,9 @@
+package indexing;
+
+/**
+ * Created by Dennis
+ */
+public final class Config {
+    public static final String projectRoot = "/home/webinfret/IndexBuilder";
+    public static final String pCloudRoot = "/home/webinfret/pCloud";
+}
