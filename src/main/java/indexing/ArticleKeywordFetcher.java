@@ -1,6 +1,8 @@
 package indexing;
 
 import java.util.ArrayList;
+import java.util.Spliterators;
+import java.util.stream.Stream;
 
 /**
  * Created by OttkO on 04-Jan-17.
@@ -10,9 +12,10 @@ public class ArticleKeywordFetcher extends ContentFetcher {
     void getKeywords(ArrayList<KeywordStructure> result, String[] nextLine, int lineNumber) {
         String[] keywords = nextLine[2].split(" ");
         int startPosition = nextLine[0].length() + nextLine[1].length();
+        int pos = startPosition;
         for (String keyword: keywords) {
-            result.add(new KeywordStructure(keyword.toLowerCase(),lineNumber,startPosition+2+ Util.getPosition(nextLine[2],keyword)));
-            // System.out.println(keyword+lineNumber);
+            result.add(new KeywordStructure(keyword.toLowerCase(),lineNumber, pos));
+            pos += keyword.length() + 1;
         }
     }
 }
