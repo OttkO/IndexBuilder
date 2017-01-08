@@ -18,8 +18,10 @@ public class TweetKeywordFetcher extends ContentFetcher {
             startPosition += nextLine[columns].length();
         }
         startPosition += columns;
+        int pos = startPosition;
         for (String keyword : keywords) {
-            result.add(new KeywordStructure(keyword.toLowerCase(), lineNumber, startPosition + 1 + Util.getPosition(nextLine[15], keyword)));
+            result.add(new KeywordStructure(keyword.toLowerCase(), lineNumber, pos));
+            pos += keyword.length() + 1;
         }
 
     }
