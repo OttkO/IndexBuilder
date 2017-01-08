@@ -14,7 +14,6 @@ public class DbHandler {
     static MysqlConnect mysqlConnect = new MysqlConnect();
 
     public DbHandler() {
-
     }
 
 
@@ -187,10 +186,7 @@ public class DbHandler {
             }
 
         } catch (SQLException e) {
-
-            // System.out.println(e.getMessage());
-            // System.out.printf("Failed on" + fileName);
-
+            throw new Error(e);
         } finally {
 
             if (preparedStatement != null) {
@@ -231,10 +227,7 @@ public class DbHandler {
             }
 
         } catch (SQLException e) {
-
-            // System.out.println(e.getMessage());
-            // System.out.printf("Failed on" + fileName);
-
+            throw new Error(e);
         } finally {
 
             if (preparedStatement != null) {
@@ -268,10 +261,7 @@ public class DbHandler {
             }
 
         } catch (SQLException e) {
-
-            //System.out.println(e.getMessage());
-            //System.out.println("Failed at " + fileName);
-
+            throw new Error(e);
         } finally {
 
             if (preparedStatement != null) {
@@ -500,10 +490,7 @@ public class DbHandler {
             preparedStatement.executeUpdate(dropTable);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
-            // System.out.println(e.getMessage());
-            // System.out.printf("Failed at " + fileName);
-
+            throw new Error(e);
         } finally {
 
             if (preparedStatement != null) {
