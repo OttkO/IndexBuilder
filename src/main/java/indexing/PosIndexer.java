@@ -55,7 +55,7 @@ public class PosIndexer {
             fileId = DbHandler.insertFileName(filepath);
             success = true;
         }
-        catch(SQLException ex) {
+        catch(Exception ex) {
             // System.out.printf(ex.getMessage());
         }
         if (!success)
