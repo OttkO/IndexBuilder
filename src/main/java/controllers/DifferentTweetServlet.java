@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.gson.Gson;
 import indexing.QueryProcessor;
+import indexing.Tweet;
 import indexing.TweetsMap;
 import indexing.Util;
 
@@ -11,9 +12,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
-@WebServlet("/getTweets")
-public class TweetServlet extends HttpServlet {
+@WebServlet("/getTweetsNotRaw")
+public class DifferentTweetServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Gson gson = new Gson();
@@ -23,10 +25,8 @@ public class TweetServlet extends HttpServlet {
         try {
             query = req.getParameter("query");
             startingPoint = Integer.parseInt(req.getParameter("startingPoint"));
-            TweetsMap tweets = Util.getTweets(QueryProcessor.processTweetQuery(query),startingPoint);
-            jsonData = gson.toJson(tweets);
-        /* TODO */
-
+            ArrayList<Tweet> tweetListFromKeywordsinFiles = Util.getTweetListFromKeywordsinFiles(QueryProcessor.processTweetQuery(query), startingPoint);
+            jsonData = gson.toJson(tweetListFromKeywordsinFiles);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -60,7 +60,6 @@ public class Util {
     }
     public static ArrayList<Article> getArticlesListFromKeywordsinFiles(ArrayList<KeywordStructure> input, int startingPoint)
     {
-
         ArrayList<Article> output = new ArrayList<Article>();
         int endPoint = (startingPoint+ 1) * 100;
         startingPoint = startingPoint * 100;
@@ -83,6 +82,7 @@ public class Util {
             tmpArticle.domain = splitLine[7];
             output.add(tmpArticle);
         }
+
         /*
         for (KeywordStructure key:input
                 ) {
@@ -102,9 +102,38 @@ public class Util {
         return output;
 
     }
-    public static Tweet getTweets(ArrayList<KeywordStructure> input, int startingPoint)
+    public static ArrayList<Tweet> getTweetListFromKeywordsinFiles(ArrayList<KeywordStructure> input, int startingPoint)
     {
-        Tweet output = new Tweet();
+        ArrayList<Tweet> output = new ArrayList<Tweet>();
+        int endPoint = (startingPoint+ 1) * 100;
+        startingPoint = startingPoint * 100;
+        if (input.size() < 100)
+        {
+            endPoint = input.size();
+        }
+        for (int i = startingPoint; i < endPoint; i++) {
+            KeywordStructure key = input.get(i);
+            String inputLine = Util.readLineInFile(key.fileName, key.lineNumber);
+            String[] splitLine = inputLine.split(";");
+            if (splitLine.length < 14)
+            {
+                continue;
+            }
+            Tweet tmpTwt = new Tweet();
+            tmpTwt.tweetID = splitLine[0];
+            tmpTwt.userID = splitLine[3];
+            tmpTwt.timestamp = splitLine[10];
+            tmpTwt.fullText = splitLine[14];
+            if (!tmpTwt.timestamp.contains("0")) {
+                output.add(tmpTwt);
+            }
+        }
+        return output;
+
+    }
+    public static TweetsMap getTweets(ArrayList<KeywordStructure> input, int startingPoint)
+    {
+        TweetsMap output = new TweetsMap();
         int endPoint = (startingPoint+ 1) * 100;
         startingPoint = startingPoint * 100;
         if (input.size() < 100)
