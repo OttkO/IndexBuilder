@@ -19,8 +19,14 @@ public class QueryProcessorTest {
     @Test
     public void processTweetQuery() throws Exception {
         ArrayList<KeywordStructure> trump = QueryProcessor.processTweetQuery("trump");
-        Tweet tweets = Util.getTweets(trump,1);
+        TweetsMap tweets = Util.getTweets(trump, 1);
         System.out.println("done");
+    }
+    @Test
+    public void processTweetNonRawQuery() throws Exception {
+        ArrayList<KeywordStructure> trump = QueryProcessor.processTweetQuery("trump");
+        ArrayList<Tweet> tweetListFromKeywordsinFiles = Util.getTweetListFromKeywordsinFiles(trump, 1);
+        System.out.println("Done");
     }
 
 }
