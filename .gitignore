@@ -1,4 +1,5 @@
 target/
+diagrams/
 src/main/java/indexing/Config.java
 src/main/java/indexing/MysqlConnect.java
 
