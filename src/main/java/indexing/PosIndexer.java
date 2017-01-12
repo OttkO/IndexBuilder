@@ -72,12 +72,35 @@ public class PosIndexer {
             }
         }
     }
+    public static void makeArticleIndexBatch(String inputDirectory) throws IOException, SQLException {
+        ArticleKeywordFetcher fetcher = new ArticleKeywordFetcher();
+        ContentFetcher fetcherId = new TweetIdFetcher();
+        List<String> result = Util.getFilesInDirectory(inputDirectory);
+        for (String file: result) {
+            int fileId = getOrCreateFileId(file);
+            if (fileId != -1) {
+                long t0 = System.currentTimeMillis();
 
+                ArrayList<KeywordStructure> keywordStructures = fetcher.getContent(file);
+                ArrayList<KeywordStructure> idStructures = fetcherId.getContent(file);
+
+                long t1 = System.currentTimeMillis();
+                long time_read = t1 - t0;
+                System.out.println("time_read = " + time_read + "ms");
+
+                DbHandler.insertRecordsIntoArticleIdTable(fileId, idStructures);
+                DbHandler.insertRecordsIntoArticleTable(fileId, keywordStructures);
+
+                long time_write = System.currentTimeMillis() - t0;
+                System.out.println("time_write = " + time_write + "ms");
+            }
+        }
+    }
     public static void reBuildIndices(String articleDir , String tweetsDir) throws IOException, SQLException {
         DbHandler.setupDatabase();
 
         //Build index
-        makeArticleIndex(articleDir);
+        makeArticleIndexBatch(articleDir);
 
         //Set up database
         makeTwitterIndexBatch(tweetsDir);

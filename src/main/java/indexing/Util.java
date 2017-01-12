@@ -53,7 +53,7 @@ public class Util {
             }
 
         }
-        if(fileNames.isEmpty() && errorOnEmptyFolder){
+            if(fileNames.isEmpty() && errorOnEmptyFolder){
             throw new Error("No files found in " + directory);
         }
         return fileNames;
