@@ -20,10 +20,7 @@ public class PosIndexer {
             int fileId = getOrCreateFileId(file); // get or create a file id depending if it exists
             if (fileId != -1) { // if it successed
                 ArrayList<KeywordStructure> keywordStructures = fetcher.getContent(file); // get all keywords from a file
-                for (KeywordStructure k :
-                        keywordStructures) {
-                    DbHandler.insertRecordIntoArticleTable(fileId, k.lineNumber, k.position, k.keyword); // insert position, keyword and filename in database
-                }
+                DbHandler.insertRecordsIntoArticleTable(fileId, keywordStructures);
             }
         }
     }
@@ -79,11 +76,11 @@ public class PosIndexer {
     public static void reBuildIndices(String articleDir , String tweetsDir) throws IOException, SQLException {
         DbHandler.setupDatabase();
 
-        //Set up database
-        makeTwitterIndexBatch(tweetsDir);
-
         //Build index
         makeArticleIndex(articleDir);
+
+        //Set up database
+        makeTwitterIndexBatch(tweetsDir);
     }
     //Insert filename in database or retrieve it if it exists
     private static int getOrCreateFileId(String filepath) throws SQLException {

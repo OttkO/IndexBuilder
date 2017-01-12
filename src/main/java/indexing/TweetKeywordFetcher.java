@@ -12,6 +12,9 @@ import java.util.Arrays;
 public class TweetKeywordFetcher extends ContentFetcher {
     @Override
     void getKeywords(ArrayList<KeywordStructure> result, String[] nextLine, int lineNumber) {
+        if(nextLine.length <= 15){
+            return;
+        }
         try {
             String processedOutput = nextLine[15].replace("'", "\"");
             String[] keywords = Util.getStringArray(new JSONArray(processedOutput));

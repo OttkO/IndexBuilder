@@ -48,6 +48,12 @@ public class DbHandler {
         final String table = "index_articles_keywords";
         return SQL.insertRecord(table, fileId, lineNumber, position, keyword);
     }
+
+    public static List<Integer> insertRecordsIntoArticleTable(int fileId, ArrayList<KeywordStructure> keywordStructures) {
+        final String table = "index_articles_keywords";
+        return SQL.insertManyRecords(table, fileId, keywordStructures);
+    }
+
     //Insert record into tweet table
     public static int insertRecordIntoTweetTable(int fileId, int lineNumber, int position, String keyword) throws SQLException {
         final String table = "index_tweets_keywords";
@@ -144,6 +150,7 @@ public class DbHandler {
     //Drop tweet index table
     public static void dropTweetIndexesTable() throws SQLException {
         dropTable("index_tweets_keywords");
+        dropTable("index_tweet_ids");
     }
 
     //Truncate Article index table
