@@ -31,6 +31,6 @@ public class PosIndexerTest {
 
     @Test
     public void testBuildIndex() throws Exception{
-        PosIndexer.reBuildIndexes(articleDir,tweetsDir);
+        PosIndexer.reBuildIndices(articleDir,tweetsDir);
     }
 }

@@ -21,7 +21,7 @@ public class IndexServlet extends HttpServlet {
         try {
             String tweetsDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "tweets").getAbsolutePath();
             String articleDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "articles").getAbsolutePath();
-            PosIndexer.reBuildIndexes(articleDir,tweetsDir);
+            PosIndexer.reBuildIndices(articleDir,tweetsDir);
             jsonObject.put("status", "Success");
         } catch (SQLException e) {
             e.printStackTrace();
