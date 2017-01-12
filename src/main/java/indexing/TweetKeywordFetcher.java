@@ -3,6 +3,7 @@ package indexing;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by OttkO on 06-Jan-17.
@@ -10,19 +11,23 @@ import java.util.ArrayList;
 public class TweetKeywordFetcher extends ContentFetcher {
     @Override
     void getKeywords(ArrayList<KeywordStructure> result, String[] nextLine, int lineNumber) {
-        String processedOutput = nextLine[15].replace("'", "\"");
-        String[] keywords = Util.getStringArray(new JSONArray(processedOutput));
-        int startPosition = 0;
-        int columns = 0;
-        for (; columns < 15; columns++) {
-            startPosition += nextLine[columns].length();
+        try {
+            String processedOutput = nextLine[15].replace("'", "\"");
+            String[] keywords = Util.getStringArray(new JSONArray(processedOutput));
+            int startPosition = 0;
+            int columns = 0;
+            for (; columns < 15; columns++) {
+                startPosition += nextLine[columns].length();
+            }
+            startPosition += columns;
+            int pos = startPosition;
+            for (String keyword : keywords) {
+                result.add(new KeywordStructure(keyword.toLowerCase(), lineNumber, pos));
+                pos += keyword.length() + 1;
+            }
+        } catch (Exception e) {
+            System.err.println("Could not parse: "+ Arrays.toString(nextLine));
+            return;
         }
-        startPosition += columns;
-        int pos = startPosition;
-        for (String keyword : keywords) {
-            result.add(new KeywordStructure(keyword.toLowerCase(), lineNumber, pos));
-            pos += keyword.length() + 1;
-        }
-
     }
 }
