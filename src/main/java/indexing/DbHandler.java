@@ -258,7 +258,7 @@ public class DbHandler {
         private static List<Integer> insertRecords(String table, int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) {
             if (lineNumbers.size() != positions.size() || keywords.size() != positions.size())
                 throw new IllegalArgumentException();
-            if (lineNumbers.size() > 15000) {
+            if (lineNumbers.size() > 25000) {
                 throw new IllegalArgumentException("To big for 1 query");
             }
             List<Integer> results = new ArrayList<>();
@@ -278,7 +278,7 @@ public class DbHandler {
                 preparedStatement = connect().prepareStatement(insertTableSQL.toString(), Statement.RETURN_GENERATED_KEYS);
                 for (int i = 0; i < lineNumbers.size(); i++) {
                     preparedStatement.setInt(i * 4 + 1, fileId);
-                    preparedStatement.setInt(i * 4 + 2, lineNumbers.get(1));
+                    preparedStatement.setInt(i * 4 + 2, lineNumbers.get(i));
                     preparedStatement.setInt(i * 4 + 3, positions.get(i));
                     preparedStatement.setString(i * 4 + 4, keywords.get(i));
                 }

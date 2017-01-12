@@ -67,8 +67,8 @@ public class PosIndexer {
                 long time_read = t1 - t0;
                 System.out.println("time_read = " + time_read + "ms");
 
-                DbHandler.insertRecordsIntoTweetTable(fileId, keywordStructures);
                 DbHandler.insertRecordsIntoTweetIdTable(fileId, idStructures);
+                DbHandler.insertRecordsIntoTweetTable(fileId, keywordStructures);
 
                 long time_write = System.currentTimeMillis() - t0;
                 System.out.println("time_write = " + time_write + "ms");
