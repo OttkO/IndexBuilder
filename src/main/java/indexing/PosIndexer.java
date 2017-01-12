@@ -75,11 +75,13 @@ public class PosIndexer {
         }
     }
     public static void reBuildIndexes(String articleDir , String tweetsDir) throws IOException, SQLException {
-        tweetsDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "tweets").getAbsolutePath();
-        articleDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "articles").getAbsolutePath();
         DbHandler.setupDatabase();
-        makeArticleIndex(articleDir);
+
+        tweetsDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "tweets").getAbsolutePath();
         makeTwitterIndexBatch(tweetsDir);
+
+        articleDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "articles").getAbsolutePath();
+        makeArticleIndex(articleDir);
     }
 
     private static int getOrCreateFileId(String filepath) throws SQLException {
