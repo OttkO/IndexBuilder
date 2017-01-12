@@ -243,12 +243,12 @@ public class DbHandler {
             List<String> keywords = keywordStructures.stream().map(kws -> kws.keyword).collect(Collectors.toList());
 
             int index0 = 0;
-            int index1 = 15000;
+            int index1 = 10000;
             ArrayList<Integer> result = new ArrayList<>();
             while (index1 < lineNumbers.size() - 1){
                 result.addAll(insertRecords(table, fileId, lineNumbers.subList(index0, index1), positions.subList(index0, index1), keywords.subList(index0, index1)));
                 index0 = index1 + 1;
-                index1 += 15000;
+                index1 += 10000;
             }
             index1 = lineNumbers.size() - 1;
             result.addAll(insertRecords(table, fileId, lineNumbers.subList(index0, index1), positions.subList(index0, index1), keywords.subList(index0, index1)));
