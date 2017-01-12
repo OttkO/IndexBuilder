@@ -53,16 +53,6 @@ public class QueryProcessor {
     }
     public static ArrayList<KeywordStructure> getTweetById(String id) throws SQLException {
         ArrayList<KeywordStructure> tweetIds = DbHandler.getKeywordPositionsTweetIds(id);
-
-        ArrayList<KeywordStructure> results = new ArrayList<>();
-        for (KeywordStructure k :
-                tweetIds) {
-            KeywordStructure found = DbHandler.findKeywordInfoTweetIndexes(k.fileName, id, 0, k.lineNumber); // look in the db
-            if (found != null) {
-                results.add(found);
-            }
-        }
-
-        return results;
+        return tweetIds;
     }
 }
