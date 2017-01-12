@@ -117,7 +117,7 @@ public class Util {
             String inputLine = Util.readLineInFile(key.fileName, key.lineNumber);
             String[] splitLine = inputLine.split(";");
             //the full_normalized_ text is column 14, so if it is not there, we continue with next in loop.
-            if (splitLine.length < 14)
+            if (splitLine.length <= 14)
             {
                 continue;
             }
@@ -127,7 +127,7 @@ public class Util {
             tmpTwt.userID = splitLine[3];
             tmpTwt.timestamp = splitLine[10];
             tmpTwt.fullText = splitLine[14];
-            if (!tmpTwt.timestamp.contains("0")) {
+            if (!tmpTwt.timestamp.contains("0")) { //small extra validation
                 output.add(tmpTwt);
             }
         }
