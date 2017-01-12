@@ -50,9 +50,9 @@ public class DbHandler {
         return SQL.insertRecord(table, fileId, lineNumber, position, keyword);
     }
 
-    public static int[] insertRecordsIntoTweetTable(int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) throws SQLException {
+    public static List<Integer> insertRecordsIntoTweetTable(int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) throws SQLException {
         final String table = "index_tweets_keywords";
-        return SQL.insertRecords(table, fileId, lineNumbers, positions, keywords);
+        return SQL.insertManyRecords(table, fileId, lineNumbers, positions, keywords);
     }
 
     public static void createArticleIndexesTable() throws SQLException {
@@ -205,10 +205,29 @@ public class DbHandler {
             return id;
         }
 
-        private static int[] insertRecords(String table, int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) {
+        private static List<Integer> insertManyRecords(String table, int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) {
             if (lineNumbers.size() != positions.size() || keywords.size() != positions.size())
                 throw new IllegalArgumentException();
-            int[] results;
+            int index0 = 0;
+            int index1 = 15000;
+            ArrayList<Integer> result = new ArrayList<>();
+            while (index1 < lineNumbers.size() - 1){
+                result.addAll(insertRecords(table, fileId, lineNumbers.subList(index0, index1), positions.subList(index0, index1), keywords.subList(index0, index1)));
+                index0 = index1 + 1;
+                index1 += 15000;
+            }
+            index1 = lineNumbers.size() - 1;
+            result.addAll(insertRecords(table, fileId, lineNumbers.subList(index0, index1), positions.subList(index0, index1), keywords.subList(index0, index1)));
+            return result;
+        }
+
+        private static List<Integer> insertRecords(String table, int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) {
+            if (lineNumbers.size() != positions.size() || keywords.size() != positions.size())
+                throw new IllegalArgumentException();
+            if (lineNumbers.size() > 15000) {
+                throw new IllegalArgumentException("To big for 1 query");
+            }
+            List<Integer> results = new ArrayList<>();
             PreparedStatement preparedStatement = null;
             StringBuilder insertTableSQL = new StringBuilder("INSERT IGNORE INTO `" + Config.DATABASE_NAME + "`.`" + table + "` "
                     + "(fileId, line_number, position, keyword) VALUES");
@@ -233,10 +252,8 @@ public class DbHandler {
                 preparedStatement.executeUpdate();
                 // execute insert SQL stetement
                 ResultSet rs = preparedStatement.getGeneratedKeys();
-                results = new int[lineNumbers.size()];
-                int i = 0;
                 while (rs.next()) {
-                    results[i++] = rs.getInt(1);
+                    results.add(rs.getInt(1));
                 }
                 if (rs.next()) {
                     System.err.println("Not expected output: " + rs);
