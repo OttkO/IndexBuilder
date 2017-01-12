@@ -11,17 +11,18 @@ import java.util.stream.Collectors;
  * Created by OttkO on 05-Jan-17.
  */
 public class PosIndexer {
+    //Build article index
     public static void makeArticleIndex(String inputDirectory) throws IOException, SQLException {
        // DbHandler.setupDatabase();
         ArticleKeywordFetcher fetcher = new ArticleKeywordFetcher();
-        List<String> result = Util.getFilesInDirectory(inputDirectory);
-        for (String file: result) {
-            int fileId = getOrCreateFileId(file);
-            if (fileId != -1) {
-                ArrayList<KeywordStructure> keywordStructures = fetcher.getContent(file);
+        List<String> result = Util.getFilesInDirectory(inputDirectory); // retrieves all files from the director
+        for (String file: result) { // process each file
+            int fileId = getOrCreateFileId(file); // get or create a file id depending if it exists
+            if (fileId != -1) { // if it successed
+                ArrayList<KeywordStructure> keywordStructures = fetcher.getContent(file); // get all keywords from a file
                 for (KeywordStructure k :
                         keywordStructures) {
-                    DbHandler.insertRecordIntoArticleTable(fileId, k.lineNumber, k.position, k.keyword);
+                    DbHandler.insertRecordIntoArticleTable(fileId, k.lineNumber, k.position, k.keyword); // insert position, keyword and filename in database
                 }
             }
         }
@@ -29,10 +30,10 @@ public class PosIndexer {
     public static void makeTwitterIndex(String inputDirectory) throws IOException, SQLException {
         //DbHandler.setupDatabase();
         TweetKeywordFetcher fetcher = new TweetKeywordFetcher();
-        List<String> result = Util.getFilesInDirectory(inputDirectory);
-        for (String file: result) {
+        List<String> result = Util.getFilesInDirectory(inputDirectory);  // retrieves all files from the director
+        for (String file: result) {  // process each file
             int fileId = getOrCreateFileId(file);
-            if (fileId != -1) {
+            if (fileId != -1) { // if it successed
                 long t0 = System.currentTimeMillis();
 
                 ArrayList<KeywordStructure> keywordStructures = fetcher.getContent(file);
@@ -42,7 +43,7 @@ public class PosIndexer {
 
                 for (KeywordStructure k :
                         keywordStructures) {
-                    DbHandler.insertRecordIntoTweetTable(fileId, k.lineNumber, k.position, k.keyword);
+                    DbHandler.insertRecordIntoTweetTable(fileId, k.lineNumber, k.position, k.keyword); // insert position, keyword and filename in database
                 }
 
                 long time_write = System.currentTimeMillis() - t0;
@@ -52,6 +53,7 @@ public class PosIndexer {
     }
     public static void makeTwitterIndexBatch(String inputDirectory) throws IOException, SQLException {
         TweetKeywordFetcher fetcher = new TweetKeywordFetcher();
+        ContentFetcher fetcherId = new TweetIdFetcher();
         List<String> result = Util.getFilesInDirectory(inputDirectory);
         for (String file: result) {
             int fileId = getOrCreateFileId(file);
@@ -59,29 +61,31 @@ public class PosIndexer {
                 long t0 = System.currentTimeMillis();
 
                 ArrayList<KeywordStructure> keywordStructures = fetcher.getContent(file);
+                ArrayList<KeywordStructure> idStructures = fetcherId.getContent(file);
 
                 long t1 = System.currentTimeMillis();
                 long time_read = t1 - t0;
                 System.out.println("time_read = " + time_read + "ms");
 
-                List<Integer> lineNumbers = keywordStructures.stream().map(kws -> kws.lineNumber).collect(Collectors.toList());
-                List<Integer> positions = keywordStructures.stream().map(kws -> kws.position).collect(Collectors.toList());
-                List<String> keywords = keywordStructures.stream().map(kws -> kws.keyword).collect(Collectors.toList());
-                DbHandler.insertRecordsIntoTweetTable(fileId, lineNumbers, positions, keywords);
+                DbHandler.insertRecordsIntoTweetTable(fileId, keywordStructures);
+                DbHandler.insertRecordsIntoTweetIdTable(fileId, idStructures);
 
                 long time_write = System.currentTimeMillis() - t0;
                 System.out.println("time_write = " + time_write + "ms");
             }
         }
     }
+
     public static void reBuildIndices(String articleDir , String tweetsDir) throws IOException, SQLException {
         DbHandler.setupDatabase();
 
+        //Set up database
         makeTwitterIndexBatch(tweetsDir);
 
+        //Build index
         makeArticleIndex(articleDir);
     }
-
+    //Insert filename in database or retrieve it if it exists
     private static int getOrCreateFileId(String filepath) throws SQLException {
         int fileId = -1;
         boolean success = false;

@@ -6,53 +6,62 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * Created by OttkO on 04-Jan-17.
  */
+//Class responsible for database calls
 public class DbHandler {
 
     public static int findFilenameId(String filepath) {
         return SQL.find("filename", "filepath", filepath);
     }
 
+    //Select keywords from articles table based on the parameters
     public static KeywordStructure findKeywordInfoArticleIndexes(String filename, String keyword, int position, int linenumber) {
         final String table = "index_articles_keywords";
         return SQL.getKeywordStructure(table, keyword, filename, linenumber, position);
     }
-
+    //Select keywords from tweets table based on the parameters
     public static KeywordStructure findKeywordInfoTweetIndexes(String filename, String keyword, int position, int linenumber) throws SQLException {
         final String table = "index_tweets_keywords";
         return SQL.getKeywordStructure(table, keyword, filename, linenumber, position);
     }
-
+    //Select keyword position indexes based on a keyword from articles
     public static ArrayList<KeywordStructure> getKeywordPositionsArticleIndexes(String keyword) throws SQLException {
         final String table = "index_articles_keywords";
         return SQL.getKeywordStructures(table, keyword);
     }
-
+    //Select keyword position indexes based on a keyword from tweets
     public static ArrayList<KeywordStructure> getKeywordPositionsTweetIndexes(String keyword) {
         final String table = "index_tweets_keywords";
         return SQL.getKeywordStructures(table, keyword);
     }
-
+    //Insert a filename into the filename table and retrieve the id
     public static int insertFileName(String fileName) {
         return SQL.insertFilename(fileName);
     }
 
+    //Insert record into article table
     public static int insertRecordIntoArticleTable(int fileId, int lineNumber, int position, String keyword) throws SQLException {
         final String table = "index_articles_keywords";
         return SQL.insertRecord(table, fileId, lineNumber, position, keyword);
     }
-
+    //Insert record into tweet table
     public static int insertRecordIntoTweetTable(int fileId, int lineNumber, int position, String keyword) throws SQLException {
         final String table = "index_tweets_keywords";
         return SQL.insertRecord(table, fileId, lineNumber, position, keyword);
     }
 
-    public static List<Integer> insertRecordsIntoTweetTable(int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) throws SQLException {
+    public static List<Integer> insertRecordsIntoTweetTable(int fileId, ArrayList<KeywordStructure> keywordStructures) throws SQLException {
         final String table = "index_tweets_keywords";
-        return SQL.insertManyRecords(table, fileId, lineNumbers, positions, keywords);
+        return SQL.insertManyRecords(table, fileId, keywordStructures);
+    }
+
+    public static List<Integer> insertRecordsIntoTweetIdTable(int fileId, ArrayList<KeywordStructure> keywordStructures) throws SQLException {
+        final String table = "index_tweet_ids";
+        return SQL.insertManyRecords(table, fileId, keywordStructures);
     }
 
     public static void createArticleIndexesTable() throws SQLException {
@@ -66,7 +75,7 @@ public class DbHandler {
                         ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
         SQL.single(createTable);
     }
-
+    //Create tweet index table
     public static void createTweetIndexesTable() throws SQLException {
         final String createTable =
                 "  CREATE TABLE IF NOT EXISTS `" + Config.DATABASE_NAME + "`.`index_tweets_keywords` (" +
@@ -77,10 +86,17 @@ public class DbHandler {
                         "  PRIMARY KEY (fileId,line_number,position) " +
                         ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
         SQL.single(createTable);
+        final String createTableId =
+                "  CREATE TABLE IF NOT EXISTS `" + Config.DATABASE_NAME + "`.`index_tweet_ids` (" +
+                        "  fileId int(11) NOT NULL, " +
+                        "  line_number int(11) NOT NULL, " +
+                        "  position int(11) NOT NULL," +
+                        "  keyword varchar(500) DEFAULT NULL, " +
+                        "  PRIMARY KEY (fileId,line_number,position) " +
+                        ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
+        SQL.single(createTableId);
     }
-
-
-
+    //Create filename table
     public static void createFileNameTable() throws SQLException {
         final String createTable =
                 "CREATE TABLE IF NOT EXISTS `" + Config.DATABASE_NAME + "`.`filename` (\n" +
@@ -91,6 +107,7 @@ public class DbHandler {
         SQL.single(createTable);
     }
 
+    ///Setup the database - drop and create tables from scratch.
     public static void setupDatabase() throws SQLException {
         disconnect(); // Close all presisting connections
         dropArticleIndexesTable();
@@ -101,47 +118,61 @@ public class DbHandler {
         createFileNameTable();
     }
 
+    //Drop filename table
     public static void dropFileNameTable() throws SQLException {
         final String tableName = "filename";
         dropTable(tableName);
     }
 
+    //Drops a table
     private static void dropTable(String tableName) {
         final String QUERY = "DROP TABLE IF EXISTS `" + Config.DATABASE_NAME + "`.`" + tableName + "`";
         SQL.single(QUERY);
     }
 
+    //Truncates a table
     private static void truncateTable(String tableName) {
         final String QUERY = "TRUNCATE `" + Config.DATABASE_NAME + "`.`" + tableName + "`";
         SQL.single(QUERY);
     }
 
+    //Drop article index table
     public static void dropArticleIndexesTable() throws SQLException {
         dropTable("index_articles_keywords");
     }
 
+    //Drop tweet index table
     public static void dropTweetIndexesTable() throws SQLException {
         dropTable("index_tweets_keywords");
     }
 
+    //Truncate Article index table
     public static void truncateArticleIndexTable() throws SQLException {
         truncateTable("index_articles_keywords");
     }
 
+    //Truncate Tweet table index
     public static void truncateTweetIndexTable() throws SQLException {
         // Was: truncateTable("index_articles_keywords");
         truncateTable("index_tweets_keywords");
     }
 
+    //Truncate filename table
     public static void truncateFilenameTable() throws SQLException {
         // Was: truncateTable("index_tweets_keywords");
         truncateTable("filename");
     }
 
+    //Truncate all tables
     public static void truncateAll() throws SQLException {
         truncateArticleIndexTable();
         truncateTweetIndexTable();
         truncateFilenameTable();
+    }
+
+    public static ArrayList<KeywordStructure> getKeywordPositionsTweetIds(String keyword) {
+        final String table = "index_tweet_ids";
+        return SQL.getKeywordStructures(table, keyword);
     }
 
     /**
@@ -205,9 +236,12 @@ public class DbHandler {
             return id;
         }
 
-        private static List<Integer> insertManyRecords(String table, int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) {
-            if (lineNumbers.size() != positions.size() || keywords.size() != positions.size())
-                throw new IllegalArgumentException();
+        private static List<Integer> insertManyRecords(String table, int fileId, ArrayList<KeywordStructure> keywordStructures) {
+
+            List<Integer> lineNumbers = keywordStructures.stream().map(kws -> kws.lineNumber).collect(Collectors.toList());
+            List<Integer> positions = keywordStructures.stream().map(kws -> kws.position).collect(Collectors.toList());
+            List<String> keywords = keywordStructures.stream().map(kws -> kws.keyword).collect(Collectors.toList());
+
             int index0 = 0;
             int index1 = 15000;
             ArrayList<Integer> result = new ArrayList<>();

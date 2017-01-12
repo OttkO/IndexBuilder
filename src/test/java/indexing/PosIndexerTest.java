@@ -8,9 +8,11 @@ import java.io.File;
 /**
  * Created by OttkO on 06-Jan-17.
  */
+//Test the index builder
 public class PosIndexerTest {
-    String tweetsDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "tweets").getAbsolutePath();
-    String articleDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "articles").getAbsolutePath();
+
+    String tweetsDir = new File(Config.pCloudRoot, "tweets").getAbsolutePath();
+    String articleDir = new File(Config.pCloudRoot, "articles").getAbsolutePath();
     @Test
     public void testMakeArticleIndex() throws Exception {
         DbHandler.setupDatabase();

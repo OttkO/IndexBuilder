@@ -6,6 +6,7 @@ import java.util.Date;
 /**
  * Created by OttkO on 06-Jan-17.
  */
+//Constructor
 public class Article {
     public Article(String id, String[] author_ids, String description, String html, String published_date, String title, String link, String domain) {
         this.id = id;
@@ -20,7 +21,7 @@ public class Article {
 
     public Article()
     {}
-
+// public fields
     public String id;
     public String[] author_ids;
     public String description;

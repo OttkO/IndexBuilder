@@ -17,17 +17,18 @@ import java.sql.SQLException;
 public class IndexServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject = new JSONObject(); // initialize JSON object
         try {
             String tweetsDir = new File(Config.pCloudRoot, "tweets").getAbsolutePath();
             String articleDir = new File(Config.pCloudRoot, "articles").getAbsolutePath();
-            PosIndexer.reBuildIndices(articleDir,tweetsDir);
-            jsonObject.put("status", "Success");
+            jsonObject.put("status", "Success"); // put success ar response
 	    jsonObject.put("tweetsDir", tweetsDir);
+            //Setup directories to read tweets and articles from, note this is platform independent
+            PosIndexer.reBuildIndices(articleDir,tweetsDir); // build the indexes
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        resp.getWriter().write(jsonObject.toString());
-        resp.setHeader("Content-Type", "application/json");
+        resp.getWriter().write(jsonObject.toString()); // put it in the response
+        resp.setHeader("Content-Type", "application/json"); // set the type of return message
     }
 }

@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  * Created by OttkO on 04-Jan-17.
  */
 public class Util {
-    public static String[] extractKeywords(String input) {
+    public static String[] extractKeywords(String input) { // extracts keywords
         {
             String[] keywords = new String[200];
             if (input.contains(","))
@@ -28,11 +28,11 @@ public class Util {
             return keywords;
         }
     }
-    public static String readLineInFile(String fileName, int x)
+    public static String readLineInFile(String fileName, int x) // reads a line from a file
     {
         String line32 = "n/a";
         try (Stream<String> lines = Files.lines(Paths.get(fileName))) {
-             line32 = lines.skip(x).findFirst().get();
+             line32 = lines.skip(x).findFirst().get(); // for faster reading, it goes directly to the line by skipping the previous
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -42,7 +42,7 @@ public class Util {
 
     public static boolean errorOnEmptyFolder = true;
 
-    public static List<String> getFilesInDirectory(String directory) {
+    public static List<String> getFilesInDirectory(String directory) { // get the files in a directory
         File folder = new File(directory);
         File[] listOfFiles = folder.listFiles();
 
@@ -60,13 +60,14 @@ public class Util {
     }
     public static ArrayList<Article> getArticlesListFromKeywordsinFiles(ArrayList<KeywordStructure> input, int startingPoint)
     {
-        ArrayList<Article> output = new ArrayList<Article>();
-        int endPoint = (startingPoint+ 1) * 100;
-        startingPoint = startingPoint * 100;
-        if (input.size() < 100)
+        ArrayList<Article> output = new ArrayList<Article>(); // initialize output
+        int endPoint = (startingPoint+ 1) * 100; // calculate end point 0,100,200...
+        startingPoint = startingPoint * 100; // calculate start point
+        if (input.size() < 100) // take care if the results are less than 100
         {
             endPoint = input.size();
         }
+        //put data in article object and add to output
         for (int i = startingPoint; i < endPoint; i++) {
             KeywordStructure key = input.get(i);
             String inputLine = Util.readLineInFile(key.fileName, key.lineNumber);
@@ -104,10 +105,10 @@ public class Util {
     }
     public static ArrayList<Tweet> getTweetListFromKeywordsinFiles(ArrayList<KeywordStructure> input, int startingPoint)
     {
-        ArrayList<Tweet> output = new ArrayList<Tweet>();
-        int endPoint = (startingPoint+ 1) * 100;
-        startingPoint = startingPoint * 100;
-        if (input.size() < 100)
+        ArrayList<Tweet> output = new ArrayList<Tweet>();  // initialize output
+        int endPoint = (startingPoint+ 1) * 100; // calculate end point 0,100,200...
+        startingPoint = startingPoint * 100; // calculate start point
+        if (input.size() < 100) //take care if the results are less than 100
         {
             endPoint = input.size();
         }
@@ -115,10 +116,12 @@ public class Util {
             KeywordStructure key = input.get(i);
             String inputLine = Util.readLineInFile(key.fileName, key.lineNumber);
             String[] splitLine = inputLine.split(";");
+            //the full_normalized_ text is column 14, so if it is not there, we continue with next in loop.
             if (splitLine.length < 14)
             {
                 continue;
             }
+            //put data in tweet object and add to output
             Tweet tmpTwt = new Tweet();
             tmpTwt.tweetID = splitLine[0];
             tmpTwt.userID = splitLine[3];
@@ -131,6 +134,7 @@ public class Util {
         return output;
 
     }
+    //same as above but returns a hashmap
     public static TweetsMap getTweets(ArrayList<KeywordStructure> input, int startingPoint)
     {
         TweetsMap output = new TweetsMap();
@@ -157,10 +161,12 @@ public class Util {
         return output;
 
     }
+    ///Gets start position. Indexer does not work when two words are the same. Do not use.
     public static int getPosition(String input,String keyword)
     {
         return input.indexOf(keyword);
     }
+    ///Returns a string array from a json array
     static String[] getStringArray(JSONArray arr){
         List<String> list = new ArrayList<String>();
         for(int i = 0; i < arr.length(); i++){

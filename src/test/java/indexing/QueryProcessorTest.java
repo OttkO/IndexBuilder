@@ -9,6 +9,8 @@ import static org.junit.Assert.*;
 /**
  * Created by OttkO on 07-Jan-17.
  */
+
+//test the query processor
 public class QueryProcessorTest {
     @Test
     public void processArticleQuery() throws Exception {
