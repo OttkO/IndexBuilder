@@ -19,10 +19,11 @@ public class IndexServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         JSONObject jsonObject = new JSONObject();
         try {
-            String tweetsDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "tweets").getAbsolutePath();
-            String articleDir = new File(new File(Config.pCloudRoot, "testAPIdata"), "articles").getAbsolutePath();
+            String tweetsDir = new File(Config.pCloudRoot, "tweets").getAbsolutePath();
+            String articleDir = new File(Config.pCloudRoot, "articles").getAbsolutePath();
             PosIndexer.buildIndexes(articleDir,tweetsDir);
             jsonObject.put("status", "Success");
+	    jsonObject.put("tweetsDir", tweetsDir);
         } catch (SQLException e) {
             e.printStackTrace();
         }
