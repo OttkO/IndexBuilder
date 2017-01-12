@@ -22,7 +22,7 @@ public class IndexServlet extends HttpServlet {
             String tweetsDir = new File(Config.pCloudRoot, "tweets").getAbsolutePath();
             String articleDir = new File(Config.pCloudRoot, "articles").getAbsolutePath();
             jsonObject.put("status", "Success"); // put success ar response
-	    jsonObject.put("tweetsDir", tweetsDir);
+            jsonObject.put("tweetsDir", tweetsDir);
             //Setup directories to read tweets and articles from, note this is platform independent
             PosIndexer.reBuildIndices(articleDir,tweetsDir); // build the indexes
         } catch (SQLException e) {

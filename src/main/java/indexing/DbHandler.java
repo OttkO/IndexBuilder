@@ -69,7 +69,10 @@ public class DbHandler {
         final String table = "index_tweet_ids";
         return SQL.insertManyRecords(table, fileId, keywordStructures);
     }
-
+    public static List<Integer> insertRecordsIntoArticleIdTable(int fileId, ArrayList<KeywordStructure> keywordStructures) throws SQLException {
+        final String table = "index_article_ids";
+        return SQL.insertManyRecords(table, fileId, keywordStructures);
+    }
     public static void createArticleIndexesTable() throws SQLException {
         final String createTable =
                 "  CREATE TABLE IF NOT EXISTS `" + Config.DATABASE_NAME + "`.`index_articles_keywords` (" +
@@ -80,6 +83,15 @@ public class DbHandler {
                         "  PRIMARY KEY (fileId,line_number,position) " +
                         ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
         SQL.single(createTable);
+        final String createArticleIndex =
+                "  CREATE TABLE IF NOT EXISTS `" + Config.DATABASE_NAME + "`.`index_article_ids` (" +
+                        "  fileId int(11) NOT NULL, " +
+                        "  line_number int(11) NOT NULL, " +
+                        "  position int(11) NOT NULL," +
+                        "  keyword varchar(500) DEFAULT NULL, " +
+                        "  PRIMARY KEY (fileId,line_number,position) " +
+                        ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
+        SQL.single(createArticleIndex);
     }
     //Create tweet index table
     public static void createTweetIndexesTable() throws SQLException {
@@ -145,6 +157,7 @@ public class DbHandler {
     //Drop article index table
     public static void dropArticleIndexesTable() throws SQLException {
         dropTable("index_articles_keywords");
+        dropTable("index_article_ids");
     }
 
     //Drop tweet index table
@@ -179,6 +192,10 @@ public class DbHandler {
 
     public static ArrayList<KeywordStructure> getKeywordPositionsTweetIds(String keyword) {
         final String table = "index_tweet_ids";
+        return SQL.getKeywordStructures(table, keyword);
+    }
+    public static ArrayList<KeywordStructure> getKeywordPositionsArticleIds(String keyword) {
+        final String table = "index_article_ids";
         return SQL.getKeywordStructures(table, keyword);
     }
 

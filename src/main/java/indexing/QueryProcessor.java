@@ -55,4 +55,8 @@ public class QueryProcessor {
         ArrayList<KeywordStructure> tweetIds = DbHandler.getKeywordPositionsTweetIds(id);
         return tweetIds;
     }
+    public static ArrayList<KeywordStructure> getArticleById(String id) throws SQLException {
+        ArrayList<KeywordStructure> articleIds = DbHandler.getKeywordPositionsArticleIds(id);
+        return articleIds;
+    }
 }
