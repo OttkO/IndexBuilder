@@ -56,7 +56,7 @@ public class DbHandler {
 
     public static void createArticleIndexesTable() throws SQLException {
         final String createTable =
-                "  CREATE TABLE `" + Config.DATABASE_NAME + "`.`index_articles_keywords` (" +
+                "  CREATE TABLE IF NOT EXISTS `" + Config.DATABASE_NAME + "`.`index_articles_keywords` (" +
                         "  fileId int(11) NOT NULL, " +
                         "  line_number int(11) NOT NULL, " +
                         "  position int(11) NOT NULL," +
@@ -68,7 +68,7 @@ public class DbHandler {
 
     public static void createTweetIndexesTable() throws SQLException {
         final String createTable =
-                "  CREATE TABLE `" + Config.DATABASE_NAME + "`.`index_tweets_keywords` (" +
+                "  CREATE TABLE IF NOT EXISTS `" + Config.DATABASE_NAME + "`.`index_tweets_keywords` (" +
                         "  fileId int(11) NOT NULL, " +
                         "  line_number int(11) NOT NULL, " +
                         "  position int(11) NOT NULL," +
@@ -82,7 +82,7 @@ public class DbHandler {
 
     public static void createFileNameTable() throws SQLException {
         final String createTable =
-                "CREATE TABLE `" + Config.DATABASE_NAME + "`.`filename` (\n" +
+                "CREATE TABLE IF NOT EXISTS `" + Config.DATABASE_NAME + "`.`filename` (\n" +
                         "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                         "  `filename` varchar(500) NOT NULL,\n" +
                         "  PRIMARY KEY (`id`)\n" +
