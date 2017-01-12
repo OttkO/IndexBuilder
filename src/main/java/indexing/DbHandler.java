@@ -2,19 +2,15 @@ package indexing;
 
 import com.mysql.jdbc.Statement;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Created by OttkO on 04-Jan-17.
  */
 public class DbHandler {
-    static MysqlConnect mysqlConnect = new MysqlConnect();
-
-    public DbHandler() {
-    }
 
     public static int findFilenameId(String filepath) {
         return SQL.find("filename", "filepath", filepath);
@@ -54,6 +50,11 @@ public class DbHandler {
         return SQL.insertRecord(table, fileId, lineNumber, position, keyword);
     }
 
+    public static int[] insertRecordsIntoTweetTable(int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) throws SQLException {
+        final String table = "index_tweets_keywords";
+        return SQL.insertRecords(table, fileId, lineNumbers, positions, keywords);
+    }
+
     public static void createArticleIndexesTable() throws SQLException {
         final String createTable =
                 "  CREATE TABLE IF NOT EXISTS `" + Config.DATABASE_NAME + "`.`index_articles_keywords` (" +
@@ -91,6 +92,7 @@ public class DbHandler {
     }
 
     public static void setupDatabase() throws SQLException {
+        disconnect(); // Close all presisting connections
         dropArticleIndexesTable();
         dropFileNameTable();
         dropTweetIndexesTable();
@@ -152,7 +154,7 @@ public class DbHandler {
             int result = -1;
             java.sql.Statement preparedStatement = null;
             try {
-                preparedStatement = mysqlConnect.connect().createStatement();
+                preparedStatement = connect().createStatement();
                 result = preparedStatement.executeUpdate(SQL);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -164,7 +166,7 @@ public class DbHandler {
                         e.printStackTrace();
                     }
                 }
-                mysqlConnect.disconnect();
+                disconnect();
             }
             return result;
         }
@@ -176,7 +178,7 @@ public class DbHandler {
                     + "(fileId, line_number, position, keyword) VALUES"
                     + "(?,?,?,?)";
             try {
-                preparedStatement = mysqlConnect.connect().prepareStatement(insertTableSQL, Statement.RETURN_GENERATED_KEYS);
+                preparedStatement = connect().prepareStatement(insertTableSQL, Statement.RETURN_GENERATED_KEYS);
                 preparedStatement.setInt(1, fileId);
                 preparedStatement.setInt(2, lineNumber);
                 preparedStatement.setInt(3, position);
@@ -198,9 +200,61 @@ public class DbHandler {
                         System.out.println("table = [" + table + "], fileId = [" + fileId + "], lineNumber = [" + lineNumber + "], position = [" + position + "], keyword = [" + keyword + "]");
                     }
                 }
-                mysqlConnect.disconnect();
+                disconnect();
             }
             return id;
+        }
+
+        private static int[] insertRecords(String table, int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) {
+            if (lineNumbers.size() != positions.size() || keywords.size() != positions.size())
+                throw new IllegalArgumentException();
+            int[] results;
+            PreparedStatement preparedStatement = null;
+            StringBuilder insertTableSQL = new StringBuilder("INSERT IGNORE INTO `" + Config.DATABASE_NAME + "`.`" + table + "` "
+                    + "(fileId, line_number, position, keyword) VALUES");
+            insertTableSQL.ensureCapacity(10 * lineNumbers.size() + insertTableSQL.length());
+            for (int i = 0; i < lineNumbers.size(); i++) {
+                insertTableSQL.append("(?,?,?,?)");
+                if (i < lineNumbers.size() - 1) {
+                    insertTableSQL.append(',');
+                } else {
+                    insertTableSQL.append(';');
+                }
+            }
+            try {
+                preparedStatement = connect().prepareStatement(insertTableSQL.toString(), Statement.RETURN_GENERATED_KEYS);
+                for (int i = 0; i < lineNumbers.size(); i++) {
+                    preparedStatement.setInt(i * 4 + 1, fileId);
+                    preparedStatement.setInt(i * 4 + 2, lineNumbers.get(1));
+                    preparedStatement.setInt(i * 4 + 3, positions.get(i));
+                    preparedStatement.setString(i * 4 + 4, keywords.get(i));
+                }
+
+                preparedStatement.executeUpdate();
+                // execute insert SQL stetement
+                ResultSet rs = preparedStatement.getGeneratedKeys();
+                results = new int[lineNumbers.size()];
+                int i = 0;
+                while (rs.next()) {
+                    results[i++] = rs.getInt(1);
+                }
+                if (rs.next()) {
+                    System.err.println("Not expected output: " + rs);
+                }
+            } catch (SQLException e) {
+                throw new Error(e);
+            } finally {
+                if (preparedStatement != null) {
+                    try {
+                        preparedStatement.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        System.out.println("table = [" + table + "], fileId = [" + fileId + "], lineNumbers = [" + lineNumbers + "], positions = [" + positions + "], keywords = [" + keywords + "]");
+                    }
+                }
+                disconnect();
+            }
+            return results;
         }
 
         private static int insertFilename(String fileName) {
@@ -212,7 +266,7 @@ public class DbHandler {
                     + "(filename) VALUES"
                     + "(?)";
             try {
-                preparedStatement = mysqlConnect.connect().prepareStatement(insertTableSQL, Statement.RETURN_GENERATED_KEYS);
+                preparedStatement = connect().prepareStatement(insertTableSQL, Statement.RETURN_GENERATED_KEYS);
                 preparedStatement.setString(1, fileName);
 
                 // execute insert SQL stetement
@@ -236,7 +290,7 @@ public class DbHandler {
                         e.printStackTrace();
                     }
                 }
-                mysqlConnect.disconnect();
+                disconnect();
             }
             return fileId;
         }
@@ -249,7 +303,7 @@ public class DbHandler {
                     "from `" + Config.DATABASE_NAME + "`.`" + table + "` as i, `" + Config.DATABASE_NAME + "`.`filename` as f " +
                     "where i.fileId = f.id and i.keyword = ?";
             try {
-                preparedStatement = mysqlConnect.connect().prepareStatement(insertTableSQL);
+                preparedStatement = connect().prepareStatement(insertTableSQL);
                 preparedStatement.setString(1, keyword);
                 // execute insert SQL stetement
                 ResultSet rs = preparedStatement.executeQuery();
@@ -269,7 +323,7 @@ public class DbHandler {
                         e.printStackTrace();
                     }
                 }
-                mysqlConnect.disconnect();
+                disconnect();
             }
             return result;
         }
@@ -286,7 +340,7 @@ public class DbHandler {
                             "and i.keyword=? " +
                             "and i.position=?";
             try {
-                preparedStatement = mysqlConnect.connect().prepareStatement(insertTableSQL);
+                preparedStatement = connect().prepareStatement(insertTableSQL);
 
                 preparedStatement.setString(1, filename);
                 preparedStatement.setInt(2, linenumber);
@@ -318,7 +372,7 @@ public class DbHandler {
                         e.printStackTrace();
                     }
                 }
-                mysqlConnect.disconnect();
+                disconnect();
             }
             return result;
         }
@@ -329,7 +383,7 @@ public class DbHandler {
             int id = -1;
             try {
                 String insertTableSQL = "SELECT `" + column + "` FROM `" + Config.DATABASE_NAME + "`.`" + tablename + "` WHERE `" + column + "` = ?";
-                preparedStatement = mysqlConnect.connect().prepareStatement(insertTableSQL);
+                preparedStatement = connect().prepareStatement(insertTableSQL);
                 preparedStatement.setString(1, value);
                 // execute insert SQL stetement
                 ResultSet rs = preparedStatement.executeQuery();
@@ -354,9 +408,50 @@ public class DbHandler {
                         e.printStackTrace();
                     }
                 }
-                mysqlConnect.disconnect();
+                disconnect();
             }
             return id;
+        }
+    }
+
+    // init connection object
+    private static Connection connection;
+    // init properties object
+    private static Properties properties;
+
+    // create properties
+    private static Properties getProperties() {
+        if (properties == null) {
+            properties = new Properties();
+            properties.setProperty("user", Config.USERNAME);
+            properties.setProperty("password", Config.PASSWORD);
+            properties.setProperty("MaxPooledStatements", Config.MAX_POOL);
+        }
+        return properties;
+    }
+
+    // connect database
+    private static Connection connect() {
+        if (connection == null) {
+            try {
+                Class.forName(Config.DATABASE_DRIVER);
+                connection = DriverManager.getConnection(Config.DATABASE_URL, getProperties());
+            } catch (ClassNotFoundException | SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return connection;
+    }
+
+    // disconnect database
+    private static void disconnect() {
+        if (connection != null) {
+            try {
+                connection.close();
+                connection = null;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

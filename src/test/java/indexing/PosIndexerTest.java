@@ -24,7 +24,13 @@ public class PosIndexerTest {
     }
 
     @Test
+    public void testMakeTwitterIndexBatch() throws Exception{
+        DbHandler.setupDatabase(); // delete all
+        PosIndexer.makeTwitterIndexBatch(tweetsDir);
+    }
+
+    @Test
     public void testBuildIndex() throws Exception{
-        PosIndexer.buildIndexes(articleDir,tweetsDir);
+        PosIndexer.reBuildIndexes(articleDir,tweetsDir);
     }
 }
