@@ -18,20 +18,20 @@ import java.util.ArrayList;
 public class ArticleServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Gson gson = new Gson();
-        String jsonData = "n/a";
-        String query = "n/a";
-        int startingPoint = 0;
+        Gson gson = new Gson(); //initialize gson object
+        String jsonData = "n/a"; // initialize response string
+        String query = "n/a"; //initialize query
+        int startingPoint = 0; // initialize first 100 responses
         try {
-            query = req.getParameter("query");
-            startingPoint = Integer.parseInt(req.getParameter("startingPoint"));
-            ArrayList<Article> articlesListFromKeywordsinFiles = Util.getArticlesListFromKeywordsinFiles(QueryProcessor.processArticleQuery(query),startingPoint);
-            jsonData = gson.toJson(articlesListFromKeywordsinFiles);
+            query = req.getParameter("query"); // receive the query
+            startingPoint = Integer.parseInt(req.getParameter("startingPoint")); // assign starting point a value
+            ArrayList<Article> articlesListFromKeywordsinFiles = Util.getArticlesListFromKeywordsinFiles(QueryProcessor.processArticleQuery(query),startingPoint); //get articles based on keyword and stPoint
+            jsonData = gson.toJson(articlesListFromKeywordsinFiles); // convert result to json
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        resp.getWriter().write(jsonData);
-        resp.setHeader("Content-Type", "application/json");
+        resp.getWriter().write(jsonData); // put it in the response
+        resp.setHeader("Content-Type", "application/json"); // set the type of return message
     }
 }

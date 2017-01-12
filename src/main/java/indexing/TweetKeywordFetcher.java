@@ -8,18 +8,19 @@ import java.util.Arrays;
 /**
  * Created by OttkO on 06-Jan-17.
  */
+//builds keywords from tweets
 public class TweetKeywordFetcher extends ContentFetcher {
     @Override
     void getKeywords(ArrayList<KeywordStructure> result, String[] nextLine, int lineNumber) {
         try {
             String processedOutput = nextLine[15].replace("'", "\"");
             String[] keywords = Util.getStringArray(new JSONArray(processedOutput));
-            int startPosition = 0;
-            int columns = 0;
+            int startPosition = 0; // initialze start position
+            int columns = 0; //initiliaze columns
             for (; columns < 15; columns++) {
                 startPosition += nextLine[columns].length();
             }
-            startPosition += columns;
+            startPosition += columns; // calculate start position
             int pos = startPosition;
             for (String keyword : keywords) {
                 result.add(new KeywordStructure(keyword.toLowerCase(), lineNumber, pos));
@@ -29,5 +30,6 @@ public class TweetKeywordFetcher extends ContentFetcher {
             System.err.println("Could not parse: "+ Arrays.toString(nextLine));
             return;
         }
+
     }
 }
