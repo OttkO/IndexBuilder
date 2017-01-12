@@ -6,6 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * Created by OttkO on 04-Jan-17.
@@ -50,9 +51,14 @@ public class DbHandler {
         return SQL.insertRecord(table, fileId, lineNumber, position, keyword);
     }
 
-    public static List<Integer> insertRecordsIntoTweetTable(int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) throws SQLException {
+    public static List<Integer> insertRecordsIntoTweetTable(int fileId, ArrayList<KeywordStructure> keywordStructures) throws SQLException {
         final String table = "index_tweets_keywords";
-        return SQL.insertManyRecords(table, fileId, lineNumbers, positions, keywords);
+        return SQL.insertManyRecords(table, fileId, keywordStructures);
+    }
+
+    public static List<Integer> insertRecordsIntoTweetIdTable(int fileId, ArrayList<KeywordStructure> keywordStructures) throws SQLException {
+        final String table = "index_tweet_ids";
+        return SQL.insertManyRecords(table, fileId, keywordStructures);
     }
 
     public static void createArticleIndexesTable() throws SQLException {
@@ -77,6 +83,15 @@ public class DbHandler {
                         "  PRIMARY KEY (fileId,line_number,position) " +
                         ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
         SQL.single(createTable);
+        final String createTableId =
+                "  CREATE TABLE IF NOT EXISTS `" + Config.DATABASE_NAME + "`.`index_tweet_ids` (" +
+                        "  fileId int(11) NOT NULL, " +
+                        "  line_number int(11) NOT NULL, " +
+                        "  position int(11) NOT NULL," +
+                        "  keyword varchar(500) DEFAULT NULL, " +
+                        "  PRIMARY KEY (fileId,line_number,position) " +
+                        ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
+        SQL.single(createTableId);
     }
 
 
@@ -144,6 +159,11 @@ public class DbHandler {
         truncateFilenameTable();
     }
 
+    public static ArrayList<KeywordStructure> getKeywordPositionsTweetIds(String keyword) {
+        final String table = "index_tweet_ids";
+        return SQL.getKeywordStructures(table, keyword);
+    }
+
     /**
      * All SQL execution shizzle.
      * Keep this private to keep it organized
@@ -205,9 +225,12 @@ public class DbHandler {
             return id;
         }
 
-        private static List<Integer> insertManyRecords(String table, int fileId, List<Integer> lineNumbers, List<Integer> positions, List<String> keywords) {
-            if (lineNumbers.size() != positions.size() || keywords.size() != positions.size())
-                throw new IllegalArgumentException();
+        private static List<Integer> insertManyRecords(String table, int fileId, ArrayList<KeywordStructure> keywordStructures) {
+
+            List<Integer> lineNumbers = keywordStructures.stream().map(kws -> kws.lineNumber).collect(Collectors.toList());
+            List<Integer> positions = keywordStructures.stream().map(kws -> kws.position).collect(Collectors.toList());
+            List<String> keywords = keywordStructures.stream().map(kws -> kws.keyword).collect(Collectors.toList());
+
             int index0 = 0;
             int index1 = 15000;
             ArrayList<Integer> result = new ArrayList<>();

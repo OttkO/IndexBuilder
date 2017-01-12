@@ -52,6 +52,7 @@ public class PosIndexer {
     }
     public static void makeTwitterIndexBatch(String inputDirectory) throws IOException, SQLException {
         TweetKeywordFetcher fetcher = new TweetKeywordFetcher();
+        ContentFetcher fetcherId = new TweetIdFetcher();
         List<String> result = Util.getFilesInDirectory(inputDirectory);
         for (String file: result) {
             int fileId = getOrCreateFileId(file);
@@ -59,21 +60,21 @@ public class PosIndexer {
                 long t0 = System.currentTimeMillis();
 
                 ArrayList<KeywordStructure> keywordStructures = fetcher.getContent(file);
+                ArrayList<KeywordStructure> idStructures = fetcherId.getContent(file);
 
                 long t1 = System.currentTimeMillis();
                 long time_read = t1 - t0;
                 System.out.println("time_read = " + time_read + "ms");
 
-                List<Integer> lineNumbers = keywordStructures.stream().map(kws -> kws.lineNumber).collect(Collectors.toList());
-                List<Integer> positions = keywordStructures.stream().map(kws -> kws.position).collect(Collectors.toList());
-                List<String> keywords = keywordStructures.stream().map(kws -> kws.keyword).collect(Collectors.toList());
-                DbHandler.insertRecordsIntoTweetTable(fileId, lineNumbers, positions, keywords);
+                DbHandler.insertRecordsIntoTweetTable(fileId, keywordStructures);
+                DbHandler.insertRecordsIntoTweetIdTable(fileId, idStructures);
 
                 long time_write = System.currentTimeMillis() - t0;
                 System.out.println("time_write = " + time_write + "ms");
             }
         }
     }
+
     public static void reBuildIndices(String articleDir , String tweetsDir) throws IOException, SQLException {
         DbHandler.setupDatabase();
 
