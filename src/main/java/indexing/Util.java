@@ -110,6 +110,7 @@ public class Util {
     }
     public static ArrayList<Tweet> getTweetListFromKeywordsinFiles(ArrayList<KeywordStructure> input, int startingPoint)
     {
+        /*
         ArrayList<Tweet> output = new ArrayList<Tweet>();  // initialize output
         int endPoint = (startingPoint+ 1) * 100; // calculate end point 0,100,200...
         startingPoint = startingPoint * 100; // calculate start point
@@ -135,6 +136,31 @@ public class Util {
             if (!tmpTwt.timestamp.contains("0")) { //small extra validation
                 output.add(tmpTwt);
             }
+        }
+        return output; */
+        ArrayList<Tweet> output = new ArrayList<Tweet>();  // initialize output
+        int endPoint = (startingPoint+ 1) * 100; // calculate end point 0,100,200...
+        startingPoint = startingPoint * 100; // calculate start point
+        if (input.size() < 100) //take care if the results are less than 100
+        {
+            endPoint = input.size();
+        }
+        for (int i = startingPoint; i < endPoint; i++) {
+            KeywordStructure key = input.get(i);
+            String inputLine = Util.readLineInFile(key.fileName, key.lineNumber);
+            String[] splitLine = inputLine.split(";");
+            //the full_normalized_ text is column 14, so if it is not there, we continue with next in loop.
+            if (splitLine.length < 27)
+            {
+                continue;
+            }
+            Tweet tmpTwt = new Tweet();
+            tmpTwt.tweetID = splitLine[0];
+            tmpTwt.userID = splitLine[3];
+            tmpTwt.timestamp = splitLine[10];
+            tmpTwt.fullText = splitLine[12];
+            output.add(tmpTwt);
+
         }
         return output;
 
