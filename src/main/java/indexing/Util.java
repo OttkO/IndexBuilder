@@ -42,8 +42,8 @@ public class Util {
 
     public static boolean errorOnEmptyFolder = true;
 
-    public static List<String> getFilesInDirectory(String directory) { // get the files in a directory
-        File folder = new File(directory);
+    public static List<String> getFilesInDirectory(File folder) { // get the files in a directory
+        assert folder.isDirectory();
         File[] listOfFiles = folder.listFiles();
 
         ArrayList<String> fileNames = new ArrayList<String>();
@@ -54,7 +54,7 @@ public class Util {
 
         }
             if(fileNames.isEmpty() && errorOnEmptyFolder){
-            throw new Error("No files found in " + directory);
+            throw new Error("No files found in " + folder.getAbsolutePath());
         }
         return fileNames;
     }

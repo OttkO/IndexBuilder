@@ -5,14 +5,13 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by OttkO on 05-Jan-17.
  */
 public class PosIndexer {
     //Build article index
-    public static void makeArticleIndex(String inputDirectory) throws IOException, SQLException {
+    public static void makeArticleIndex(File inputDirectory) throws IOException, SQLException {
        // DbHandler.setupDatabase();
         ArticleKeywordFetcher fetcher = new ArticleKeywordFetcher();
         List<String> result = Util.getFilesInDirectory(inputDirectory); // retrieves all files from the director
@@ -24,7 +23,8 @@ public class PosIndexer {
             }
         }
     }
-    public static void makeTwitterIndex(String inputDirectory) throws IOException, SQLException {
+
+    public static void makeTwitterIndex(File inputDirectory) throws IOException, SQLException {
         //DbHandler.setupDatabase();
         TweetKeywordFetcher fetcher = new TweetKeywordFetcher();
         List<String> result = Util.getFilesInDirectory(inputDirectory);  // retrieves all files from the director
@@ -48,7 +48,8 @@ public class PosIndexer {
             }
         }
     }
-    public static void makeTwitterIndexBatch(String inputDirectory) throws IOException, SQLException {
+
+    public static void makeTwitterIndexBatch(File inputDirectory) throws IOException, SQLException {
         TweetKeywordFetcher fetcher = new TweetKeywordFetcher();
         ContentFetcher fetcherId = new TweetIdFetcher();
         List<String> result = Util.getFilesInDirectory(inputDirectory);
@@ -62,7 +63,7 @@ public class PosIndexer {
 
                 long t1 = System.currentTimeMillis();
                 long time_read = t1 - t0;
-                System.out.println("time_read = " + time_read + "ms");
+                System.out.println("time_read = " + time_read + "ms (" + file + ")");
 
                 DbHandler.insertRecordsIntoTweetIdTable(fileId, idStructures);
                 DbHandler.insertRecordsIntoTweetTable(fileId, keywordStructures);
@@ -72,7 +73,8 @@ public class PosIndexer {
             }
         }
     }
-    public static void makeArticleIndexBatch(String inputDirectory) throws IOException, SQLException {
+
+    public static void makeArticleIndexBatch(File inputDirectory) throws IOException, SQLException {
         ArticleKeywordFetcher fetcher = new ArticleKeywordFetcher();
         ContentFetcher fetcherId = new TweetIdFetcher();
         List<String> result = Util.getFilesInDirectory(inputDirectory);
@@ -86,7 +88,7 @@ public class PosIndexer {
 
                 long t1 = System.currentTimeMillis();
                 long time_read = t1 - t0;
-                System.out.println("time_read = " + time_read + "ms");
+                System.out.println("time_read = " + time_read + "ms (" + file + ")");
 
                 DbHandler.insertRecordsIntoArticleIdTable(fileId, idStructures);
                 DbHandler.insertRecordsIntoArticleTable(fileId, keywordStructures);
@@ -96,7 +98,8 @@ public class PosIndexer {
             }
         }
     }
-    public static void reBuildIndices(String articleDir , String tweetsDir) throws IOException, SQLException {
+
+    public static void reBuildIndices(File articleDir, File tweetsDir) throws IOException, SQLException {
         DbHandler.setupDatabase();
 
         //Build index

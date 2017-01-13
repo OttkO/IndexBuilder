@@ -15,12 +15,19 @@ import java.sql.SQLException;
 
 @WebServlet("/makeindex")
 public class IndexServlet extends HttpServlet {
+
+    public static File articleDir = new File(new File(Config.pCloudRoot, "preprocessed_articles"), "sander_results");
+    public static File tweetsDir = new File(Config.pCloudRoot, "tweets");
+
+    {
+        assert articleDir.exists();
+        assert tweetsDir.exists();
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         JSONObject jsonObject = new JSONObject(); // initialize JSON object
         try {
-            String tweetsDir = new File(Config.pCloudRoot, "tweets").getAbsolutePath();
-            String articleDir = new File(Config.pCloudRoot, "articles").getAbsolutePath();
             jsonObject.put("status", "Success"); // put success ar response
             jsonObject.put("tweetsDir", tweetsDir);
             //Setup directories to read tweets and articles from, note this is platform independent
