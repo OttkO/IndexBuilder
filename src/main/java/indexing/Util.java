@@ -69,9 +69,14 @@ public class Util {
         }
         //put data in article object and add to output
         for (int i = startingPoint; i < endPoint; i++) {
+
             KeywordStructure key = input.get(i);
             String inputLine = Util.readLineInFile(key.fileName, key.lineNumber);
             String[] splitLine = inputLine.split(";");
+            if (splitLine.length <= 7)
+            {
+                continue;
+            }
             Article tmpArticle = new Article();
             tmpArticle.id = splitLine[0];
             tmpArticle.author_ids = getStringArray(new JSONArray(splitLine[1]));
