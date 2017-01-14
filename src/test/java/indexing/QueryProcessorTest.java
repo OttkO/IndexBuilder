@@ -14,8 +14,8 @@ import static org.junit.Assert.*;
 public class QueryProcessorTest {
     @Test
     public void processArticleQuery() throws Exception {
-        ArrayList<KeywordStructure> video = QueryProcessor.processArticleQuery("about");
-        Util.getArticlesListFromKeywordsinFiles(video, 0);
+        ArrayList<KeywordStructure> result = QueryProcessor.processArticleQuery("about");
+        ArrayList<Article> articles = Util.getArticlesListFromKeywordsinFiles(result, 0);
     }
 
     @Test

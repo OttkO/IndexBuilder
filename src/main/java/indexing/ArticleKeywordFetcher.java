@@ -9,8 +9,16 @@ import java.util.ArrayList;
 public class ArticleKeywordFetcher extends ContentFetcher {
     @Override
     void getKeywords(ArrayList<KeywordStructure> result, String[] nextLine, int lineNumber) {
-        String[] keywords = nextLine[2].split(" "); // split the third column on space
-        int startPosition = nextLine[0].length() + nextLine[1].length()+3; // calculate start position
+        if (nextLine.length < 6){
+            // Cannot parse, to small
+            return;
+        }
+        String[] keywords = nextLine[5].split(" "); // split the third column on space
+        // calculate start position
+        int startPosition = nextLine[0].length();
+        for (int i = 1; i <= 4; i++) {
+            startPosition += nextLine[i].length() + 3;
+        }
         int pos = startPosition;
         for (String keyword: keywords) { // go through all split words
             result.add(new KeywordStructure(keyword.toLowerCase(),lineNumber, pos)); // add them to result
