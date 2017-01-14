@@ -31,5 +31,6 @@ public class TweetDetailServlet extends HttpServlet {
         }
         resp.getWriter().write(jsonData);
         resp.setHeader("Content-Type", "application/json");
+        resp.setHeader("Access-Control-Allow-Origin","*"); // add header to be accessed by JS
     }
 }
