@@ -18,6 +18,8 @@ import java.util.ArrayList;
 public class TweetDetailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setHeader("Content-Type", "application/json"); // set the type of return message
+        resp.setHeader("Access-Control-Allow-Origin","*"); // add header to be accessed by JS
         Gson gson = new Gson();
         String jsonData = "n/a";
         String query = "n/a";
@@ -30,7 +32,5 @@ public class TweetDetailServlet extends HttpServlet {
             e.printStackTrace();
         }
         resp.getWriter().write(jsonData);
-        resp.setHeader("Content-Type", "application/json");
-        resp.setHeader("Access-Control-Allow-Origin","*"); // add header to be accessed by JS
     }
 }
