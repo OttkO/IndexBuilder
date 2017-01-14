@@ -127,7 +127,7 @@ public class DbHandler {
 
     ///Setup the database - drop and create tables from scratch.
     public static void setupDatabase() throws SQLException {
-        disconnect(); // Close all presisting connections
+       // disconnect(); // Close all presisting connections
         dropArticleIndexesTable();
         dropFileNameTable();
         dropTweetIndexesTable();
@@ -221,7 +221,7 @@ public class DbHandler {
                         e.printStackTrace();
                     }
                 }
-                disconnect();
+           //     disconnect();
             }
             return result;
         }
@@ -255,7 +255,7 @@ public class DbHandler {
                         System.out.println("table = [" + table + "], fileId = [" + fileId + "], lineNumber = [" + lineNumber + "], position = [" + position + "], keyword = [" + keyword + "]");
                     }
                 }
-                disconnect();
+             //   disconnect();
             }
             return id;
         }
@@ -327,7 +327,7 @@ public class DbHandler {
                         System.out.println("table = [" + table + "], fileId = [" + fileId + "], lineNumbers = [" + lineNumbers + "], positions = [" + positions + "], keywords = [" + keywords + "]");
                     }
                 }
-                disconnect();
+               // disconnect();
             }
             return results;
         }
@@ -365,7 +365,7 @@ public class DbHandler {
                         e.printStackTrace();
                     }
                 }
-                disconnect();
+               // disconnect();
             }
             return fileId;
         }
@@ -398,7 +398,7 @@ public class DbHandler {
                         e.printStackTrace();
                     }
                 }
-                disconnect();
+               // disconnect();
             }
             return result;
         }
@@ -447,7 +447,7 @@ public class DbHandler {
                         e.printStackTrace();
                     }
                 }
-                disconnect();
+               // disconnect();
             }
             return result;
         }
@@ -483,7 +483,7 @@ public class DbHandler {
                         e.printStackTrace();
                     }
                 }
-                disconnect();
+               // disconnect();
             }
             return id;
         }
