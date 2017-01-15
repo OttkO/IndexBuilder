@@ -212,7 +212,16 @@ public class DbHandler {
                 preparedStatement = connect().createStatement();
                 result = preparedStatement.executeUpdate(SQL);
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                // Try one more time
+                try{
+                    disconnect();
+                    preparedStatement = connect().createStatement();
+                    result = preparedStatement.executeUpdate(SQL);
+                    new AssertionError("Had to reconnect to execute query").printStackTrace();
+                } catch (SQLException e1) {
+                    // second time also failed :(
+                    throw new RuntimeException(e);
+                }
             } finally {
                 if (preparedStatement != null) {
                     try {
