@@ -510,6 +510,9 @@ public class DbHandler {
             properties.setProperty("user", Config.USERNAME);
             properties.setProperty("password", Config.PASSWORD);
             properties.setProperty("MaxPooledStatements", Config.MAX_POOL);
+            properties.setProperty("cachePrepStmts","true");
+            properties.setProperty("prepStmtCacheSize","512");
+            properties.setProperty("useServerPreparedStmts","false");
         }
         return properties;
     }
