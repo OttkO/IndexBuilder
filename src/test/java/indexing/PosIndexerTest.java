@@ -17,6 +17,12 @@ public class PosIndexerTest {
     }
 
     @Test
+    public void testMakeArticleBatchIndex() throws Exception {
+        DbHandler.setupDatabase();
+        PosIndexer.makeArticleIndexBatch(articleDir);
+    }
+
+    @Test
     public void testMakeTwitterIndex() throws Exception {
         DbHandler.setupDatabase();
         PosIndexer.makeTwitterIndex(tweetsDir);

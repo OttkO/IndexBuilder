@@ -32,7 +32,5 @@ public class ArticleDetailServlet extends HttpServlet {
             e.printStackTrace();
         }
         resp.getWriter().write(jsonData); // put it in the response
-
-
     }
 }

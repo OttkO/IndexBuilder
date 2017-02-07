@@ -275,13 +275,15 @@ public class DbHandler {
             List<Integer> positions = keywordStructures.stream().map(kws -> kws.position).collect(Collectors.toList());
             List<String> keywords = keywordStructures.stream().map(kws -> kws.keyword).collect(Collectors.toList());
 
+            final int MAX = 1000;
+
             int index0 = 0;
-            int index1 = 10000;
+            int index1 = MAX;
             ArrayList<Integer> result = new ArrayList<>();
             while (index1 < lineNumbers.size() - 1){
                 result.addAll(insertRecords(table, fileId, lineNumbers.subList(index0, index1), positions.subList(index0, index1), keywords.subList(index0, index1)));
                 index0 = index1 + 1;
-                index1 += 10000;
+                index1 += MAX;
             }
             index1 = lineNumbers.size() - 1;
             result.addAll(insertRecords(table, fileId, lineNumbers.subList(index0, index1), positions.subList(index0, index1), keywords.subList(index0, index1)));
@@ -390,7 +392,11 @@ public class DbHandler {
                 preparedStatement = connect().prepareStatement(insertTableSQL);
                 preparedStatement.setString(1, keyword);
                 // execute insert SQL stetement
+                long t0 = System.currentTimeMillis();
                 ResultSet rs = preparedStatement.executeQuery();
+                long t1 = System.currentTimeMillis();
+                System.out.println("preparedStatement.executeQuery() took "+(t1-t0)+"ms");
+
                 while (rs.next()) {
                     int position = rs.getInt("position");
                     int line_number = rs.getInt("line_number");
